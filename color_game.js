@@ -7,7 +7,7 @@ class LikeButton extends React.Component {
         super(props);
         this.state = {
             liked: false,
-            size: 10,
+            size: 6,
             showDiff: false,
             color: "",
             diffColor: "",
@@ -23,7 +23,7 @@ class LikeButton extends React.Component {
         let color = this.getRandomColor();
         let diffColor;
         do {
-            diffColor = this.getSimularColor(color, 1, 1);
+            diffColor = this.getSimularColor(color, 1);
         } while (diffColor === color)
 
         console.log(diffColor);
@@ -40,25 +40,27 @@ class LikeButton extends React.Component {
     }
 
     getRandomColor() {
-        var letters = '0123456789ABCDEF';
         var color = '#';
         for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+            let colorNum = Math.floor(Math.random() * 16);
+            color += colorNum.toString(16);
         }
         return color;
     }
 
-    getSimularColor(original, diff, hard) {
+    getSimularColor(original, diff) {
         let color = "#";
 
+        let changeLoc = Math.floor(Math.random() * 2);
+
         for (let i = 0; i < 3; i++) {
-            let colorInt = parseInt(original.substr(2 * i + 1, 2), 16);
-            // console.log(colorInt);
-            if (hard < i) {
-                colorInt += diff;
-                colorInt %= 16;
+            let colorNum = parseInt(original.substr(2 * i + 1, 2), 16);
+            if (i == changeLoc) {
+                colorNum += diff;
+                colorNum %= 16;
             }
-            color += colorInt.toString(16).length < 2 ? "0" + colorInt.toString(16) : colorInt.toString(16);
+            let colorStr = colorNum.toString(16);
+            color += colorStr.length < 2 ? "0" + colorStr : colorStr;
         }
 
         return color;
@@ -75,18 +77,18 @@ class LikeButton extends React.Component {
             let row = [];
             for (let j = 0; j < this.state.size; j++) {
                 row.push(
-                    <div className="col" key={j} style={{
+                    <div className="col text-center ver" key={j} style={{
                         backgroundColor: (i == diffLocation[0] && j == diffLocation[1] ? diffColor : color)
                     }}>
-                        {this.state.showDiff && i == diffLocation[0] && j == diffLocation[1] ? <span>
+                        {this.state.showDiff && i == diffLocation[0] && j == diffLocation[1] ? <span className="badge badge-pill badge-primary">
                             Here
                         </span> : <br />}
-
+                        <br />
                     </div >
                 );
             }
             rows.push(
-                <div className="row" key={i}>{row}</div>
+                <div className="row row-eq-height" key={i}>{row}</div>
             )
         }
 
