@@ -7,11 +7,14 @@ class LikeButton extends React.Component {
         super(props);
         this.state = {
             liked: false,
-            size: 6,
+            size: 5,
             showDiff: false,
             color: "",
             diffColor: "",
-            diffLocation: []
+            diffLocation: [],
+            started: false,
+            startTime: null,
+            time: null
         };
     }
 
@@ -37,6 +40,22 @@ class LikeButton extends React.Component {
             color: color,
             showDiff: false
         })
+
+        this.startTimer();
+    }
+
+    startTimer() {
+        this.setState({
+            startTime: Date.now()
+        });
+
+        this.timer = setInterval(() => this.setState({
+            time: Date.now() - this.state.startTime
+        }), 1);
+    }
+
+    stopTimer() {
+        clearInterval(this.timer)
     }
 
     getRandomColor() {
@@ -66,29 +85,36 @@ class LikeButton extends React.Component {
         return color;
     }
 
+    clickBlock(correct) {
+        if (correct) {
+            this.reloadColorGame();
+            this.stopTimer();
+        } else {
+            alert("no");
+        }
+    }
+
     render() {
         let rows = [];
 
-        let diffLocation = this.state.diffLocation;
-        let color = this.state.color;
-        let diffColor = this.state.diffColor;
+        let { diffLocation, color, diffColor, started, time } = this.state;
 
         for (let i = 0; i < this.state.size; i++) {
             let row = [];
             for (let j = 0; j < this.state.size; j++) {
+                let isDiff = i == diffLocation[0] && j == diffLocation[1];
                 row.push(
-                    <div className="col text-center ver" key={j} style={{
-                        backgroundColor: (i == diffLocation[0] && j == diffLocation[1] ? diffColor : color)
-                    }}>
-                        {this.state.showDiff && i == diffLocation[0] && j == diffLocation[1] ? <span className="badge badge-pill badge-primary">
+                    <div className="col text-center" key={j} style={{
+                        backgroundColor: isDiff ? diffColor : color
+                    }} onClick={() => { this.clickBlock(isDiff) }}>
+                        {(this.state.showDiff || true) && isDiff ? <span className="badge badge-pill badge-primary">
                             Here
-                        </span> : <br />}
-                        <br />
+                        </span> : null}
                     </div >
                 );
             }
             rows.push(
-                <div className="row row-eq-height" key={i}>{row}</div>
+                <div className="row" key={i} style={{ height: "3rem" }}>{row}</div>
             )
         }
 
@@ -105,7 +131,11 @@ class LikeButton extends React.Component {
                     <button className="btn btn-success ml-1" onClick={() => this.reloadColorGame()}>Next</button>
                 </div>
 
-                {rows}
+                <div className="mb-3 text-center">
+                    {started ? <span className="badge badge-warning">{time}</span> : <span className="badge badge-success">Waiting to start</span>}
+                </div>
+
+                {started ? <div className="mx-1">{rows}</div> : <button className="btn btn-block btn-primary" onClick={() => { this.setState({ ...this.state, started: true }) }}>Start</button>}
             </div >
         );
     }
