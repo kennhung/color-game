@@ -2,19 +2,19 @@
 
 const e = React.createElement;
 
-class LikeButton extends React.Component {
+class ColorGame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            liked: false,
             size: 5,
-            showDiff: false,
             color: "",
             diffColor: "",
             diffLocation: [],
-            started: false,
+            showDiff: false,
             startTime: null,
-            time: null
+            time: null,
+            started: false,
+            wrongAns: null
         };
     }
 
@@ -23,23 +23,34 @@ class LikeButton extends React.Component {
     }
 
     reloadColorGame() {
+        this.stopTimer();
+
         let color = this.getRandomColor();
         let diffColor;
         do {
             diffColor = this.getSimularColor(color, 1);
         } while (diffColor === color)
 
-        console.log(diffColor);
-
-        let diffLocation = [Math.floor(Math.random() * this.state.size), Math.floor(Math.random() * this.state.size)];
+        let diffLocation = [Math.floor(Math.random() * (this.state.size - 1)), Math.floor(Math.random() * (this.state.size - 1))];
 
         this.setState({
             ...this.state,
             diffLocation: diffLocation,
             diffColor: diffColor,
             color: color,
-            showDiff: false
-        })
+            showDiff: false,
+            wrongAns: null,
+            started: false
+        });
+    }
+
+    startGame() {
+        this.reloadColorGame();
+
+        this.setState({
+            ...this.state,
+            started: true
+        });
 
         this.startTimer();
     }
@@ -86,60 +97,74 @@ class LikeButton extends React.Component {
     }
 
     clickBlock(correct) {
+        let state = this.state;
+
         if (correct) {
             this.reloadColorGame();
+            state = this.state;
             this.stopTimer();
+            state.wrongAns = false;
+            state.started = false;
         } else {
-            alert("no");
+            state.wrongAns = true;
         }
+
+        this.setState(state);
     }
 
     render() {
         let rows = [];
 
-        let { diffLocation, color, diffColor, started, time } = this.state;
+        let { diffLocation, color, diffColor, started, time, wrongAns } = this.state;
 
         for (let i = 0; i < this.state.size; i++) {
             let row = [];
             for (let j = 0; j < this.state.size; j++) {
                 let isDiff = i == diffLocation[0] && j == diffLocation[1];
                 row.push(
-                    <div className="col text-center" key={j} style={{
-                        backgroundColor: isDiff ? diffColor : color
-                    }} onClick={() => { this.clickBlock(isDiff) }}>
-                        {(this.state.showDiff || true) && isDiff ? <span className="badge badge-pill badge-primary">
-                            Here
-                        </span> : null}
+                    <div className={"col text-center p-1 " + ((this.state.showDiff) && isDiff ? "bg-info border border-dark" : "")} key={j} onClick={() => { this.clickBlock(isDiff) }}>
+                        <div className="rounded mx-auto h-100" style={{
+                            backgroundColor: isDiff ? diffColor : color
+                        }}></div>
                     </div >
                 );
             }
             rows.push(
-                <div className="row" key={i} style={{ height: "3rem" }}>{row}</div>
+                <div className="row" key={i} style={{ height: "100px" }}>{row}</div>
             )
         }
 
         return (
             <div>
-                <div className="mb-3">
+                <div className="mb-1">
                     <button className="btn btn-success" onClick={() => {
                         this.setState({
                             ...this.state,
                             showDiff: true
-                        })
+                        });
+                        this.stopTimer();
                     }}>Show different</button>
 
                     <button className="btn btn-success ml-1" onClick={() => this.reloadColorGame()}>Next</button>
                 </div>
 
+
                 <div className="mb-3 text-center">
-                    {started ? <span className="badge badge-warning">{time}</span> : <span className="badge badge-success">Waiting to start</span>}
+                    <h4 className={"fade " + (!!wrongAns ? "show" : "")}><span className={"badge badge-danger"} > Wrong Answer</span></h4>
+                    {started ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{time % 1000} sec</span> : <span className="badge badge-success">Waiting to start</span>}
                 </div>
 
-                {started ? <div className="mx-1">{rows}</div> : <button className="btn btn-block btn-primary" onClick={() => { this.setState({ ...this.state, started: true }) }}>Start</button>}
+                <div className={!started ? "text-center" : "d-none"}>
+                    <button className="btn btn-primary btn-lg" onClick={() => { this.startGame(); }}>Start</button>
+                </div>
+
+                <div className="text-center">
+                    {started ? <div className="mx-1">{rows}</div> : null}
+                </div>
             </div >
         );
     }
 }
 
 const domContainer = document.querySelector('#like_button_container');
-ReactDOM.render(e(LikeButton), domContainer);
+ReactDOM.render(e(ColorGame), domContainer);
