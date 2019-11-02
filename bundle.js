@@ -272,9 +272,15 @@ exports["default"] = _default;
 
 var _color_game = _interopRequireDefault(require("./color_game"));
 
+var _userInformation = _interopRequireDefault(require("./userInformation"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -284,13 +290,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var e = React.createElement;
 
@@ -305,8 +313,16 @@ function (_React$Component) {
     _classCallCheck(this, MainSector);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainSector).call(this, props));
+
+    _defineProperty(_assertThisInitialized(_this), "setUserId", function (id) {
+      _this.setState(_objectSpread({}, _this.state, {
+        userId: id
+      }));
+    });
+
     _this.state = {
-      gameStarted: false
+      gameStarted: false,
+      userId: null
     };
     return _this;
   }
@@ -314,15 +330,19 @@ function (_React$Component) {
   _createClass(MainSector, [{
     key: "render",
     value: function render() {
-      var gameStarted = this.state.gameStarted;
+      var _this$state = this.state,
+          gameStarted = _this$state.gameStarted,
+          userId = _this$state.userId;
       return React.createElement("div", {
         className: "container mt-5"
       }, React.createElement("div", {
         className: gameStarted ? "d-none d-md-block" : ""
-      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game.")), React.createElement(_color_game["default"], {
+      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game.")), userId ? React.createElement(_color_game["default"], {
         timeLimit: 5000,
         size: 5,
         diffRange: 50
+      }) : React.createElement(_userInformation["default"], {
+        setUserId: this.setUserId
       }));
     }
   }]);
@@ -333,4 +353,111 @@ function (_React$Component) {
 var domContainer = document.querySelector('#main_container');
 ReactDOM.render(e(MainSector), domContainer);
 
-},{"./color_game":1}]},{},[2]);
+},{"./color_game":1,"./userInformation":3}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var userInformation =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(userInformation, _React$Component);
+
+  function userInformation(props) {
+    var _this;
+
+    _classCallCheck(this, userInformation);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(userInformation).call(this, props));
+
+    _defineProperty(_assertThisInitialized(_this), "onChange", function (e) {
+      _this.setState(_objectSpread({}, _this.state, _defineProperty({}, e.target.id, e.target.value)));
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "onSubmit", function (e) {
+      e.preventDefault();
+      console.log(_this.state);
+
+      _this.props.setUserId("1");
+    });
+
+    _this.state = {
+      birthday: null,
+      gender: "Male"
+    };
+    return _this;
+  }
+
+  _createClass(userInformation, [{
+    key: "render",
+    value: function render() {
+      return React.createElement("div", {
+        className: "card border-secondary"
+      }, React.createElement("div", {
+        className: "card-body"
+      }, React.createElement("h5", {
+        className: "card-title"
+      }, "Basic Information"), React.createElement("h6", {
+        className: "card-subtitle mb-2 text-muted"
+      }, "some text...."), React.createElement("form", {
+        onSubmit: this.onSubmit
+      }, React.createElement("div", {
+        className: "form-group"
+      }, React.createElement("label", {
+        htmlFor: "birthday"
+      }, "Birthday"), React.createElement("input", {
+        required: true,
+        type: "date",
+        className: "form-control",
+        id: "birthday",
+        onChange: this.onChange
+      })), React.createElement("div", {
+        className: "form-group"
+      }, React.createElement("label", {
+        htmlFor: "gender"
+      }, "Genger"), React.createElement("select", {
+        required: true,
+        className: "form-control",
+        defaultValue: "Male",
+        id: "gender",
+        onChange: this.onChange
+      }, React.createElement("option", null, "Male"), React.createElement("option", null, "Female"))), React.createElement("button", {
+        className: "btn btn-primary btn-block"
+      }, "Save"))));
+    }
+  }]);
+
+  return userInformation;
+}(React.Component);
+
+var _default = userInformation;
+exports["default"] = _default;
+
+},{}]},{},[2]);
