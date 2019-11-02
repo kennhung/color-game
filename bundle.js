@@ -51,6 +51,7 @@ function (_React$Component) {
     });
 
     _this.state = {
+      gameId: _uuid(),
       color: "",
       diffColor: "",
       diffLocation: [],
@@ -58,7 +59,8 @@ function (_React$Component) {
       startTime: null,
       time: null,
       started: false,
-      wrongAns: null
+      wrongAns: null,
+      gameCycle: 0
     };
     return _this;
   }
@@ -85,7 +87,8 @@ function (_React$Component) {
         diffColor: diffColor,
         color: color,
         showDiff: false,
-        wrongAns: null
+        wrongAns: null,
+        gameCycle: this.state.gameCycle + 1
       }));
     }
   }, {
@@ -169,6 +172,7 @@ function (_React$Component) {
     key: "clickBlock",
     value: function clickBlock(correct) {
       if (correct) {
+        this.saveResult();
         this.reloadColorGame();
         this.startTimer();
       } else {
@@ -178,18 +182,37 @@ function (_React$Component) {
       }
     }
   }, {
+    key: "saveResult",
+    value: function saveResult() {
+      var _this$state = this.state,
+          color = _this$state.color,
+          diffColor = _this$state.diffColor,
+          gameId = _this$state.gameId,
+          time = _this$state.time,
+          diffLocation = _this$state.diffLocation;
+      var data = {
+        userId: this.props.userId,
+        gameId: gameId,
+        color: color,
+        diffColor: diffColor,
+        time: time,
+        diffLocation: diffLocation
+      };
+      console.log(data);
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this3 = this;
 
       var rows = [];
-      var _this$state = this.state,
-          diffLocation = _this$state.diffLocation,
-          color = _this$state.color,
-          diffColor = _this$state.diffColor,
-          started = _this$state.started,
-          time = _this$state.time,
-          wrongAns = _this$state.wrongAns;
+      var _this$state2 = this.state,
+          diffLocation = _this$state2.diffLocation,
+          color = _this$state2.color,
+          diffColor = _this$state2.diffColor,
+          started = _this$state2.started,
+          time = _this$state2.time,
+          wrongAns = _this$state2.wrongAns;
 
       for (var i = 0; i < this.props.size; i++) {
         var row = [];
@@ -234,7 +257,12 @@ function (_React$Component) {
         onClick: function onClick() {
           return _this3.reloadColorGame();
         }
-      }, "Next")), React.createElement("div", {
+      }, "Next"), React.createElement("button", {
+        className: "btn btn-success ml-1",
+        onClick: function onClick() {
+          return _this3.saveResult();
+        }
+      }, "Save result")), React.createElement("div", {
         className: "mb-3 text-center"
       }, React.createElement("h4", {
         className: "fade " + (!!wrongAns ? "show" : "")
@@ -322,28 +350,61 @@ function (_React$Component) {
 
     _this.state = {
       gameStarted: false,
-      userId: null
+      userId: null,
+      loaded: false,
+      diffRange: null,
+      size: null,
+      timeLimit: null
     };
     return _this;
   }
 
   _createClass(MainSector, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.loadConfig();
+    }
+  }, {
+    key: "loadConfig",
+    value: function loadConfig() {
+      var _this2 = this;
+
+      firebase.firestore().collection("settings").doc("default").get().then(function (doc) {
+        var data = doc.data();
+
+        _this2.setState(_objectSpread({}, _this2.state, {
+          size: data.size,
+          diffRange: data.diffRange,
+          timeLimit: data.timeLimit,
+          loaded: true
+        }));
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this$state = this.state,
           gameStarted = _this$state.gameStarted,
-          userId = _this$state.userId;
+          userId = _this$state.userId,
+          diffRange = _this$state.diffRange,
+          timeLimit = _this$state.timeLimit,
+          size = _this$state.size,
+          loaded = _this$state.loaded;
       return React.createElement("div", {
         className: "container mt-5"
       }, React.createElement("div", {
         className: gameStarted ? "d-none d-md-block" : ""
-      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game.")), userId ? React.createElement(_color_game["default"], {
-        timeLimit: 5000,
-        size: 5,
-        diffRange: 50
+      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game.")), loaded ? userId ? React.createElement(_color_game["default"], {
+        timeLimit: timeLimit,
+        size: size,
+        diffRange: diffRange,
+        debug: true,
+        userId: userId
       }) : React.createElement(_userInformation["default"], {
         setUserId: this.setUserId
-      }));
+      }) : null);
     }
   }]);
 
@@ -418,6 +479,8 @@ function (_React$Component) {
   _createClass(userInformation, [{
     key: "render",
     value: function render() {
+      var _this2 = this;
+
       return React.createElement("div", {
         className: "card border-secondary"
       }, React.createElement("div", {
@@ -426,7 +489,12 @@ function (_React$Component) {
         className: "card-title"
       }, "Basic Information"), React.createElement("h6", {
         className: "card-subtitle mb-2 text-muted"
-      }, "some text...."), React.createElement("form", {
+      }, "some text...."), React.createElement("button", {
+        className: "btn btn-secondary mb-2",
+        onClick: function onClick() {
+          return _this2.props.setUserId("skip");
+        }
+      }, "Skip"), React.createElement("form", {
         onSubmit: this.onSubmit
       }, React.createElement("div", {
         className: "form-group"

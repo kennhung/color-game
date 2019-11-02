@@ -9,8 +9,30 @@ class MainSector extends React.Component {
         super(props);
         this.state = {
             gameStarted: false,
-            userId: null
+            userId: null,
+            loaded: false,
+            diffRange: null,
+            size: null,
+            timeLimit: null
         };
+    }
+
+    componentDidMount() {
+        this.loadConfig();
+    }
+
+    loadConfig() {
+        firebase.firestore().collection("settings").doc("default").get().then((doc) => {
+            const data = doc.data();
+            this.setState({
+                ...this.state,
+                size: data.size,
+                diffRange: data.diffRange,
+                timeLimit: data.timeLimit,
+                loaded: true
+            })
+        }).catch((err) => console.log(err));
+
     }
 
     setUserId = (id) => {
@@ -21,7 +43,7 @@ class MainSector extends React.Component {
     }
 
     render() {
-        const { gameStarted, userId } = this.state;
+        const { gameStarted, userId, diffRange, timeLimit, size, loaded } = this.state;
 
         return (
             <div className="container mt-5">
@@ -29,8 +51,9 @@ class MainSector extends React.Component {
                     <h2>Find the different color</h2>
                     <p>This is the demo of the different color finding game.</p>
                 </div>
-
-                {userId ? <ColorGame timeLimit={5000} size={5} diffRange={50} /> : <UserInformation setUserId={this.setUserId} />}
+                {loaded ?
+                    userId ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={true} userId={userId} /> : <UserInformation setUserId={this.setUserId} />
+                    : null}
             </div>
         );
     }

@@ -4,6 +4,7 @@ class ColorGame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            gameId: _uuid(),
             color: "",
             diffColor: "",
             diffLocation: [],
@@ -11,7 +12,8 @@ class ColorGame extends React.Component {
             startTime: null,
             time: null,
             started: false,
-            wrongAns: null
+            wrongAns: null,
+            gameCycle: 0
         };
     }
 
@@ -36,7 +38,8 @@ class ColorGame extends React.Component {
             diffColor: diffColor,
             color: color,
             showDiff: false,
-            wrongAns: null
+            wrongAns: null,
+            gameCycle: this.state.gameCycle + 1
         });
     }
 
@@ -120,6 +123,7 @@ class ColorGame extends React.Component {
     clickBlock(correct) {
 
         if (correct) {
+            this.saveResult();
             this.reloadColorGame();
             this.startTimer();
         } else {
@@ -128,6 +132,20 @@ class ColorGame extends React.Component {
                 wrongAns: true
             });
         }
+    }
+
+    saveResult() {
+        const { color, diffColor, gameId, time, diffLocation } = this.state;
+        let data = {
+            userId: this.props.userId,
+            gameId,
+            color,
+            diffColor,
+            time,
+            diffLocation
+        }
+
+        console.log(data);
     }
 
     render() {
@@ -157,8 +175,8 @@ class ColorGame extends React.Component {
             <div>
                 <div className={this.props.debug ? "mb-1" : "d-none"}>
                     <button className="btn btn-success" onClick={this.showDiff}>Show different</button>
-
                     <button className="btn btn-success ml-1" onClick={() => this.reloadColorGame()}>Next</button>
+                    <button className="btn btn-success ml-1" onClick={() => this.saveResult()}>Save result</button>
                 </div>
 
 
