@@ -1,7 +1,5 @@
 'use strict';
 
-const e = React.createElement;
-
 class ColorGame extends React.Component {
     constructor(props) {
         super(props);
@@ -30,7 +28,7 @@ class ColorGame extends React.Component {
         let color = this.getRandomColor();
         let diffColor;
         do {
-            diffColor = this.getSimularColor(color, 50);
+            diffColor = this.getSimularColor(color, this.state.diffRange);
         } while (diffColor === color)
 
         let diffLocation = [Math.floor(Math.random() * (this.state.size - 1)), Math.floor(Math.random() * (this.state.size - 1))];
@@ -101,7 +99,7 @@ class ColorGame extends React.Component {
         for (let i = 0; i < 3; i++) {
             let colorNum = parseInt(original.substr(2 * i + 1, 2), 16);
             if (i == changeLoc) {
-                colorNum += diff;
+                colorNum += Math.random() > 0.5 ? diff : -diff;
                 colorNum %= 255;
             }
             let colorStr = colorNum.toString(16);
@@ -180,5 +178,4 @@ class ColorGame extends React.Component {
     }
 }
 
-const domContainer = document.querySelector('#like_button_container');
-ReactDOM.render(e(ColorGame), domContainer);
+export default ColorGame;

@@ -15,14 +15,7 @@
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h2>Find the different color</h2>
-        <p>This is the demo of the different color finding game.</p>
-
-
-        <!-- We will put our React component inside this div. -->
-        <div id="like_button_container"></div>
-    </div>
+    <div id="main_container"></div>
 
     <!-- Load React. -->
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
@@ -31,7 +24,31 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <!-- Load our React component. -->
-    <script type="text/babel" src="color_game.js"></script>
+    <script type="text/babel" src="bundle.js"></script>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-analytics.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAvtY9gERC7nJ0L4M8Dqlgfe_YNak-DZwI",
+            authDomain: "color-game-a5025.firebaseapp.com",
+            databaseURL: "https://color-game-a5025.firebaseio.com",
+            projectId: "color-game-a5025",
+            storageBucket: "color-game-a5025.appspot.com",
+            messagingSenderId: "490543334730",
+            appId: "1:490543334730:web:186a18e9a2685205c8edb3",
+            measurementId: "G-EBPKBXB39H"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>
 </body>
 
 </html>
