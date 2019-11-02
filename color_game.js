@@ -7,6 +7,8 @@ class ColorGame extends React.Component {
         super(props);
         this.state = {
             size: 5,
+            diffRange: 50,
+            timeLimit: 5000,
             color: "",
             diffColor: "",
             diffLocation: [],
@@ -28,7 +30,7 @@ class ColorGame extends React.Component {
         let color = this.getRandomColor();
         let diffColor;
         do {
-            diffColor = this.getSimularColor(color, 1);
+            diffColor = this.getSimularColor(color, 50);
         } while (diffColor === color)
 
         let diffLocation = [Math.floor(Math.random() * (this.state.size - 1)), Math.floor(Math.random() * (this.state.size - 1))];
@@ -40,7 +42,7 @@ class ColorGame extends React.Component {
             color: color,
             showDiff: false,
             wrongAns: null,
-            started: false
+            // started: false
         });
     }
 
@@ -60,9 +62,22 @@ class ColorGame extends React.Component {
             startTime: Date.now()
         });
 
-        this.timer = setInterval(() => this.setState({
-            time: Date.now() - this.state.startTime
-        }), 1);
+        this.timer = setInterval(() => {
+            const timeLimit = this.state.timeLimit;
+            let time = Date.now() - this.state.startTime;
+
+            if (timeLimit > 0) {
+                time = timeLimit - time;
+            }
+
+            if (time < 0) {
+                this.showDiff();
+            }
+
+            this.setState({
+                time
+            });
+        }, 1);
     }
 
     stopTimer() {
@@ -87,7 +102,7 @@ class ColorGame extends React.Component {
             let colorNum = parseInt(original.substr(2 * i + 1, 2), 16);
             if (i == changeLoc) {
                 colorNum += diff;
-                colorNum %= 16;
+                colorNum %= 255;
             }
             let colorStr = colorNum.toString(16);
             color += colorStr.length < 2 ? "0" + colorStr : colorStr;
@@ -96,20 +111,25 @@ class ColorGame extends React.Component {
         return color;
     }
 
+    showDiff = () => {
+        this.setState({
+            ...this.state,
+            showDiff: true
+        });
+        this.stopTimer();
+    }
+
     clickBlock(correct) {
-        let state = this.state;
 
         if (correct) {
             this.reloadColorGame();
-            state = this.state;
-            this.stopTimer();
-            state.wrongAns = false;
-            state.started = false;
+            this.startTimer();
         } else {
-            state.wrongAns = true;
+            this.setState({
+                ...this.state,
+                wrongAns: true
+            });
         }
-
-        this.setState(state);
     }
 
     render() {
@@ -137,13 +157,7 @@ class ColorGame extends React.Component {
         return (
             <div>
                 <div className="mb-1">
-                    <button className="btn btn-success" onClick={() => {
-                        this.setState({
-                            ...this.state,
-                            showDiff: true
-                        });
-                        this.stopTimer();
-                    }}>Show different</button>
+                    <button className="btn btn-success" onClick={this.showDiff}>Show different</button>
 
                     <button className="btn btn-success ml-1" onClick={() => this.reloadColorGame()}>Next</button>
                 </div>
@@ -151,7 +165,7 @@ class ColorGame extends React.Component {
 
                 <div className="mb-3 text-center">
                     <h4 className={"fade " + (!!wrongAns ? "show" : "")}><span className={"badge badge-danger"} > Wrong Answer</span></h4>
-                    {started ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{time % 1000} sec</span> : <span className="badge badge-success">Waiting to start</span>}
+                    <h5>{started ? (time > 0 ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{Math.floor(time % 1000)} sec</span> : <span className="badge badge-danger">Time's Up</span>) : <span className="badge badge-success">Waiting to start</span>}</h5>
                 </div>
 
                 <div className={!started ? "text-center" : "d-none"}>
