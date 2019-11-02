@@ -51,9 +51,6 @@ function (_React$Component) {
     });
 
     _this.state = {
-      size: 5,
-      diffRange: 50,
-      timeLimit: 5000,
       color: "",
       diffColor: "",
       diffLocation: [],
@@ -79,17 +76,16 @@ function (_React$Component) {
       var diffColor;
 
       do {
-        diffColor = this.getSimularColor(color, this.state.diffRange);
+        diffColor = this.getSimularColor(color, this.props.diffRange);
       } while (diffColor === color);
 
-      var diffLocation = [Math.floor(Math.random() * (this.state.size - 1)), Math.floor(Math.random() * (this.state.size - 1))];
+      var diffLocation = [Math.floor(Math.random() * (this.props.size - 1)), Math.floor(Math.random() * (this.props.size - 1))];
       this.setState(_objectSpread({}, this.state, {
         diffLocation: diffLocation,
         diffColor: diffColor,
         color: color,
         showDiff: false,
-        wrongAns: null // started: false
-
+        wrongAns: null
       }));
     }
   }, {
@@ -110,7 +106,7 @@ function (_React$Component) {
         startTime: Date.now()
       });
       this.timer = setInterval(function () {
-        var timeLimit = _this2.state.timeLimit;
+        var timeLimit = _this2.props.timeLimit;
 
         var time = Date.now() - _this2.state.startTime;
 
@@ -155,7 +151,12 @@ function (_React$Component) {
 
         if (i == changeLoc) {
           colorNum += Math.random() > 0.5 ? diff : -diff;
-          colorNum %= 255;
+
+          if (colorNum > 255) {
+            colorNum -= diff * 2;
+          } else if (colorNum < 0) {
+            colorNum += diff * 2;
+          }
         }
 
         var colorStr = colorNum.toString(16);
@@ -190,13 +191,13 @@ function (_React$Component) {
           time = _this$state.time,
           wrongAns = _this$state.wrongAns;
 
-      for (var i = 0; i < this.state.size; i++) {
+      for (var i = 0; i < this.props.size; i++) {
         var row = [];
 
         var _loop = function _loop(j) {
           var isDiff = i == diffLocation[0] && j == diffLocation[1];
           row.push(React.createElement("div", {
-            className: "col text-center p-1 " + (_this3.state.showDiff && isDiff ? "bg-info border border-dark" : ""),
+            className: "col text-center p-1 ",
             key: j,
             onClick: function onClick() {
               _this3.clickBlock(isDiff);
@@ -204,12 +205,13 @@ function (_React$Component) {
           }, React.createElement("div", {
             className: "rounded mx-auto h-100",
             style: {
-              backgroundColor: isDiff ? diffColor : color
+              backgroundColor: isDiff ? diffColor : color,
+              opacity: _this3.state.showDiff && !isDiff ? "0.3" : "1"
             }
           })));
         };
 
-        for (var j = 0; j < this.state.size; j++) {
+        for (var j = 0; j < this.props.size; j++) {
           _loop(j);
         }
 
@@ -223,7 +225,7 @@ function (_React$Component) {
       }
 
       return React.createElement("div", null, React.createElement("div", {
-        className: "mb-1"
+        className: this.props.debug ? "mb-1" : "d-none"
       }, React.createElement("button", {
         className: "btn btn-success",
         onClick: this.showDiff
@@ -303,16 +305,25 @@ function (_React$Component) {
     _classCallCheck(this, MainSector);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(MainSector).call(this, props));
-    _this.state = {};
+    _this.state = {
+      gameStarted: false
+    };
     return _this;
   }
 
   _createClass(MainSector, [{
     key: "render",
     value: function render() {
+      var gameStarted = this.state.gameStarted;
       return React.createElement("div", {
         className: "container mt-5"
-      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game."), React.createElement(_color_game["default"], null));
+      }, React.createElement("div", {
+        className: gameStarted ? "d-none d-md-block" : ""
+      }, React.createElement("h2", null, "Find the different color"), React.createElement("p", null, "This is the demo of the different color finding game.")), React.createElement(_color_game["default"], {
+        timeLimit: 5000,
+        size: 5,
+        diffRange: 50
+      }));
     }
   }]);
 

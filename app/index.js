@@ -7,15 +7,23 @@ class MainSector extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            gameStarted: false
         };
     }
 
+
+
     render() {
+        const { gameStarted } = this.state;
+
         return (
             <div className="container mt-5">
-                <h2>Find the different color</h2>
-                <p>This is the demo of the different color finding game.</p>
-                <ColorGame />
+                <div className={gameStarted ? "d-none d-md-block" : ""}>
+                    <h2>Find the different color</h2>
+                    <p>This is the demo of the different color finding game.</p>
+                </div>
+                
+                <ColorGame timeLimit={5000} size={5} diffRange={50} />
             </div>
         );
     }

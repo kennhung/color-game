@@ -4,9 +4,6 @@ class ColorGame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            size: 5,
-            diffRange: 50,
-            timeLimit: 5000,
             color: "",
             diffColor: "",
             diffLocation: [],
@@ -28,10 +25,10 @@ class ColorGame extends React.Component {
         let color = this.getRandomColor();
         let diffColor;
         do {
-            diffColor = this.getSimularColor(color, this.state.diffRange);
+            diffColor = this.getSimularColor(color, this.props.diffRange);
         } while (diffColor === color)
 
-        let diffLocation = [Math.floor(Math.random() * (this.state.size - 1)), Math.floor(Math.random() * (this.state.size - 1))];
+        let diffLocation = [Math.floor(Math.random() * (this.props.size - 1)), Math.floor(Math.random() * (this.props.size - 1))];
 
         this.setState({
             ...this.state,
@@ -39,8 +36,7 @@ class ColorGame extends React.Component {
             diffColor: diffColor,
             color: color,
             showDiff: false,
-            wrongAns: null,
-            // started: false
+            wrongAns: null
         });
     }
 
@@ -61,7 +57,7 @@ class ColorGame extends React.Component {
         });
 
         this.timer = setInterval(() => {
-            const timeLimit = this.state.timeLimit;
+            const timeLimit = this.props.timeLimit;
             let time = Date.now() - this.state.startTime;
 
             if (timeLimit > 0) {
@@ -100,7 +96,11 @@ class ColorGame extends React.Component {
             let colorNum = parseInt(original.substr(2 * i + 1, 2), 16);
             if (i == changeLoc) {
                 colorNum += Math.random() > 0.5 ? diff : -diff;
-                colorNum %= 255;
+                if (colorNum > 255) {
+                    colorNum -= diff * 2;
+                } else if (colorNum < 0) {
+                    colorNum += diff * 2;
+                }
             }
             let colorStr = colorNum.toString(16);
             color += colorStr.length < 2 ? "0" + colorStr : colorStr;
@@ -135,14 +135,15 @@ class ColorGame extends React.Component {
 
         let { diffLocation, color, diffColor, started, time, wrongAns } = this.state;
 
-        for (let i = 0; i < this.state.size; i++) {
+        for (let i = 0; i < this.props.size; i++) {
             let row = [];
-            for (let j = 0; j < this.state.size; j++) {
+            for (let j = 0; j < this.props.size; j++) {
                 let isDiff = i == diffLocation[0] && j == diffLocation[1];
                 row.push(
-                    <div className={"col text-center p-1 " + ((this.state.showDiff) && isDiff ? "bg-info border border-dark" : "")} key={j} onClick={() => { this.clickBlock(isDiff) }}>
+                    <div className="col text-center p-1 " key={j} onClick={() => { this.clickBlock(isDiff) }}>
                         <div className="rounded mx-auto h-100" style={{
-                            backgroundColor: isDiff ? diffColor : color
+                            backgroundColor: isDiff ? diffColor : color,
+                            opacity: (this.state.showDiff) && !isDiff ? "0.3" : "1"
                         }}></div>
                     </div >
                 );
@@ -154,7 +155,7 @@ class ColorGame extends React.Component {
 
         return (
             <div>
-                <div className="mb-1">
+                <div className={this.props.debug ? "mb-1" : "d-none"}>
                     <button className="btn btn-success" onClick={this.showDiff}>Show different</button>
 
                     <button className="btn btn-success ml-1" onClick={() => this.reloadColorGame()}>Next</button>
