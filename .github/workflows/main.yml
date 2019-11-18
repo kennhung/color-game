@@ -5,13 +5,14 @@ on:
       - master
 jobs:
 
-  install-and-test:
+  build-and-deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [10.x]
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@master
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@master
       with:
@@ -19,15 +20,6 @@ jobs:
     - name: Install and Test
       run: |
         npm install --save --save-dev
-      env:
-        CI: true
-
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
-
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@master
       env:
