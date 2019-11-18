@@ -4,16 +4,18 @@ import ColorGame from './color_game';
 import UserInformation from './userInformation';
 const e = React.createElement;
 
+const config = require('./config.json');
+
 class MainSector extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             gameStarted: false,
             userId: null,
-            loaded: false,
-            diffRange: null,
-            size: null,
-            timeLimit: null
+            loaded: true,
+            diffRange: config.diffRange,
+            size: config.size,
+            timeLimit: config.timeLimit
         };
     }
 
@@ -22,17 +24,16 @@ class MainSector extends React.Component {
     }
 
     loadConfig() {
-        firebase.firestore().collection("settings").doc("default").get().then((doc) => {
-            const data = doc.data();
-            this.setState({
-                ...this.state,
-                size: data.size,
-                diffRange: data.diffRange,
-                timeLimit: data.timeLimit,
-                loaded: true
-            })
-        }).catch((err) => console.log(err));
-
+        // firebase.firestore().collection("settings").doc("default").get().then((doc) => {
+        //     const data = doc.data();
+        //     this.setState({
+        //         ...this.state,
+        //         size: data.size,
+        //         diffRange: data.diffRange,
+        //         timeLimit: data.timeLimit,
+        //         loaded: true
+        //     })
+        // }).catch((err) => console.log(err));
     }
 
     setUserId = (id) => {

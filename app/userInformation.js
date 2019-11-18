@@ -1,12 +1,23 @@
 'use strict';
 
+import Cookies from 'js-cookie';
+
 class userInformation extends React.Component {
     constructor(props) {
         super(props);
+
+        let userId = Cookies.get('userId');
+
+        if (userId != undefined) {
+            props.setUserId(userId);
+        }
+
         this.state = {
             birthday: null,
             gender: "Male"
         };
+
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     onChange = (e) => {
@@ -18,10 +29,16 @@ class userInformation extends React.Component {
 
     onSubmit = (e) => {
         e.preventDefault();
+        const setUserId = this.props.setUserId;
 
-        console.log(this.state);
-
-        this.props.setUserId("1");
+        firebase.firestore().collection("users").add(this.state)
+            .then(function (docRef) {
+                Cookies.set("userId", docRef.id);
+                setUserId(docRef.id);
+            })
+            .catch(function (error) {
+                console.error("Error adding document: ", error);
+            });
     }
 
     render() {

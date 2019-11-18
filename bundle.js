@@ -296,6 +296,12 @@ var _default = ColorGame;
 exports["default"] = _default;
 
 },{}],2:[function(require,module,exports){
+module.exports={
+    "diffRange": 50,
+    "size": 5,
+    "timeLimit": 5000
+}
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var _color_game = _interopRequireDefault(require("./color_game"));
@@ -330,6 +336,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var e = React.createElement;
 
+var config = require('./config.json');
+
 var MainSector =
 /*#__PURE__*/
 function (_React$Component) {
@@ -351,10 +359,10 @@ function (_React$Component) {
     _this.state = {
       gameStarted: false,
       userId: null,
-      loaded: false,
-      diffRange: null,
-      size: null,
-      timeLimit: null
+      loaded: true,
+      diffRange: config.diffRange,
+      size: config.size,
+      timeLimit: config.timeLimit
     };
     return _this;
   }
@@ -366,21 +374,16 @@ function (_React$Component) {
     }
   }, {
     key: "loadConfig",
-    value: function loadConfig() {
-      var _this2 = this;
-
-      firebase.firestore().collection("settings").doc("default").get().then(function (doc) {
-        var data = doc.data();
-
-        _this2.setState(_objectSpread({}, _this2.state, {
-          size: data.size,
-          diffRange: data.diffRange,
-          timeLimit: data.timeLimit,
-          loaded: true
-        }));
-      })["catch"](function (err) {
-        return console.log(err);
-      });
+    value: function loadConfig() {// firebase.firestore().collection("settings").doc("default").get().then((doc) => {
+      //     const data = doc.data();
+      //     this.setState({
+      //         ...this.state,
+      //         size: data.size,
+      //         diffRange: data.diffRange,
+      //         timeLimit: data.timeLimit,
+      //         loaded: true
+      //     })
+      // }).catch((err) => console.log(err));
     }
   }, {
     key: "render",
@@ -414,13 +417,17 @@ function (_React$Component) {
 var domContainer = document.querySelector('#main_container');
 ReactDOM.render(e(MainSector), domContainer);
 
-},{"./color_game":1,"./userInformation":3}],3:[function(require,module,exports){
+},{"./color_game":1,"./config.json":2,"./userInformation":4}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
+
+var _jsCookie = _interopRequireDefault(require("js-cookie"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -464,15 +471,27 @@ function (_React$Component) {
 
     _defineProperty(_assertThisInitialized(_this), "onSubmit", function (e) {
       e.preventDefault();
-      console.log(_this.state);
+      var setUserId = _this.props.setUserId;
+      firebase.firestore().collection("users").add(_this.state).then(function (docRef) {
+        _jsCookie["default"].set("userId", docRef.id);
 
-      _this.props.setUserId("1");
+        setUserId(docRef.id);
+      })["catch"](function (error) {
+        console.error("Error adding document: ", error);
+      });
     });
+
+    var userId = _jsCookie["default"].get('userId');
+
+    if (userId != undefined) {
+      props.setUserId(userId);
+    }
 
     _this.state = {
       birthday: null,
       gender: "Male"
     };
+    _this.onSubmit = _this.onSubmit.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -528,4 +547,169 @@ function (_React$Component) {
 var _default = userInformation;
 exports["default"] = _default;
 
-},{}]},{},[2]);
+},{"js-cookie":5}],5:[function(require,module,exports){
+/*!
+ * JavaScript Cookie v2.2.1
+ * https://github.com/js-cookie/js-cookie
+ *
+ * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+ * Released under the MIT license
+ */
+;(function (factory) {
+	var registeredInModuleLoader;
+	if (typeof define === 'function' && define.amd) {
+		define(factory);
+		registeredInModuleLoader = true;
+	}
+	if (typeof exports === 'object') {
+		module.exports = factory();
+		registeredInModuleLoader = true;
+	}
+	if (!registeredInModuleLoader) {
+		var OldCookies = window.Cookies;
+		var api = window.Cookies = factory();
+		api.noConflict = function () {
+			window.Cookies = OldCookies;
+			return api;
+		};
+	}
+}(function () {
+	function extend () {
+		var i = 0;
+		var result = {};
+		for (; i < arguments.length; i++) {
+			var attributes = arguments[ i ];
+			for (var key in attributes) {
+				result[key] = attributes[key];
+			}
+		}
+		return result;
+	}
+
+	function decode (s) {
+		return s.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent);
+	}
+
+	function init (converter) {
+		function api() {}
+
+		function set (key, value, attributes) {
+			if (typeof document === 'undefined') {
+				return;
+			}
+
+			attributes = extend({
+				path: '/'
+			}, api.defaults, attributes);
+
+			if (typeof attributes.expires === 'number') {
+				attributes.expires = new Date(new Date() * 1 + attributes.expires * 864e+5);
+			}
+
+			// We're using "expires" because "max-age" is not supported by IE
+			attributes.expires = attributes.expires ? attributes.expires.toUTCString() : '';
+
+			try {
+				var result = JSON.stringify(value);
+				if (/^[\{\[]/.test(result)) {
+					value = result;
+				}
+			} catch (e) {}
+
+			value = converter.write ?
+				converter.write(value, key) :
+				encodeURIComponent(String(value))
+					.replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+
+			key = encodeURIComponent(String(key))
+				.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent)
+				.replace(/[\(\)]/g, escape);
+
+			var stringifiedAttributes = '';
+			for (var attributeName in attributes) {
+				if (!attributes[attributeName]) {
+					continue;
+				}
+				stringifiedAttributes += '; ' + attributeName;
+				if (attributes[attributeName] === true) {
+					continue;
+				}
+
+				// Considers RFC 6265 section 5.2:
+				// ...
+				// 3.  If the remaining unparsed-attributes contains a %x3B (";")
+				//     character:
+				// Consume the characters of the unparsed-attributes up to,
+				// not including, the first %x3B (";") character.
+				// ...
+				stringifiedAttributes += '=' + attributes[attributeName].split(';')[0];
+			}
+
+			return (document.cookie = key + '=' + value + stringifiedAttributes);
+		}
+
+		function get (key, json) {
+			if (typeof document === 'undefined') {
+				return;
+			}
+
+			var jar = {};
+			// To prevent the for loop in the first place assign an empty array
+			// in case there are no cookies at all.
+			var cookies = document.cookie ? document.cookie.split('; ') : [];
+			var i = 0;
+
+			for (; i < cookies.length; i++) {
+				var parts = cookies[i].split('=');
+				var cookie = parts.slice(1).join('=');
+
+				if (!json && cookie.charAt(0) === '"') {
+					cookie = cookie.slice(1, -1);
+				}
+
+				try {
+					var name = decode(parts[0]);
+					cookie = (converter.read || converter)(cookie, name) ||
+						decode(cookie);
+
+					if (json) {
+						try {
+							cookie = JSON.parse(cookie);
+						} catch (e) {}
+					}
+
+					jar[name] = cookie;
+
+					if (key === name) {
+						break;
+					}
+				} catch (e) {}
+			}
+
+			return key ? jar[key] : jar;
+		}
+
+		api.set = set;
+		api.get = function (key) {
+			return get(key, false /* read as raw */);
+		};
+		api.getJSON = function (key) {
+			return get(key, true /* read as json */);
+		};
+		api.remove = function (key, attributes) {
+			set(key, '', extend(attributes, {
+				expires: -1
+			}));
+		};
+
+		api.defaults = {};
+
+		api.withConverter = init;
+
+		return api;
+	}
+
+	return init(function () {});
+}));
+
+},{}]},{},[3]);
