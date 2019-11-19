@@ -54,12 +54,18 @@ gulp.task('build-minify', function (done) {
 })
 
 gulp.task('replaceHTML', function (done) {
+    let replace = {
+        'react': '<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>\n    ' +
+            '<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>',
+        'bundle': '<script type="text/babel" src="' + path.MINIFIED_OUT + '"></script>'
+    }
+
+    if (process.env.npm_config_buildId) {
+        replace['buildId'] = process.env.npm_config_buildId;
+    }
+
     gulp.src(path.HTML)
-        .pipe(htmlreplace({
-            'react': '<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>\n    ' +
-                '<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>',
-            'bundle': '<script type="text/babel" src="' + path.MINIFIED_OUT + '"></script>'
-        }))
+        .pipe(htmlreplace(replace))
         .pipe(gulp.dest(path.DEST));
     done();
 });

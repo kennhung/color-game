@@ -29,13 +29,28 @@
 <body>
     <div id="main_container"></div>
 
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div></div>
+            <div class="col-auto">
+                <h6 class="text-center">
+                    Build:
+                    <span class="badge badge-info">
+                        <!-- build:buildId -->xxxxxxx
+                        <!-- endbuild -->
+                    </span>
+                </h6>
+            </div>
+        </div>
+    </div>
+
     <!-- Load React. -->
     <!-- build:react -->
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
     <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
     <!-- endbuild -->
-    
+
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <script>
