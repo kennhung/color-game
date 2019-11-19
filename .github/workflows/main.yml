@@ -27,3 +27,4 @@ jobs:
         BRANCH: gh-pages
         FOLDER: build
         BUILD_SCRIPT: npm run build --buildId=$GITHUB_ACTION
+        CNAME: color-game.csie.io
