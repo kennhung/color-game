@@ -26,5 +26,5 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
         FOLDER: build
-        BUILD_SCRIPT: npm run build --buildId=$GITHUB_ACTION
+        BUILD_SCRIPT: npm run build --buildId=$GITHUB_SHA
         CNAME: color-game.csie.io

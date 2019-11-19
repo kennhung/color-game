@@ -48,6 +48,7 @@ gulp.task('build-minify', function (done) {
         .transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
         .bundle()
         .pipe(source(path.MINIFIED_OUT))
+        .pipe(streamify(uglify(path.MINIFIED_OUT)))
         .pipe(gulp.dest(path.DEST));
 
     done();
@@ -61,7 +62,7 @@ gulp.task('replaceHTML', function (done) {
     }
 
     if (process.env.npm_config_buildId) {
-        replace['buildId'] = process.env.npm_config_buildId;
+        replace['buildId'] = process.env.npm_config_buildId.substr(0, 7);
     }
 
     gulp.src(path.HTML)
