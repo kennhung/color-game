@@ -1,7 +1,7 @@
 // 引入所有需要的檔案
 const gulp = require('gulp');
 const browserify = require('browserify');
-const watchify = require('watchify');
+const fs = require('fs');
 const source = require('vinyl-source-stream');
 const htmlreplace = require('gulp-html-replace');
 const streamify = require('gulp-streamify');
@@ -82,11 +82,22 @@ gulp.task('replaceHTML', function (done) {
     done();
 });
 
+gulp.task('createMetaFile', function (done) {
+    fs.writeFileSync(path.DEST + "/meta.json", JSON.stringify(
+        {
+            buildId: process.env.npm_config_buildId,
+            buildTime: new Date()
+        }
+    ), { encoding: 'utf8' });
+
+    done();
+});
+
 gulp.task('apply-prod-environment', function (done) {
     process.env.NODE_ENV = 'production';
     done();
 });
 
 
-exports.production = gulp.series('copy', 'build-minify', 'replaceHTML', 'apply-prod-environment');
+exports.production = gulp.series('copy', 'build-minify', 'replaceHTML', 'createMetaFile', 'apply-prod-environment');
 exports.default = gulp.parallel('watch', 'copy', 'bundle');
