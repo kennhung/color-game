@@ -71,7 +71,8 @@ gulp.task('replaceHTML', function (done) {
     let replace = {
         'react': '<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>\n    ' +
             '<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>',
-        'bundle': '<script type="text/babel" src="' + path.MINIFIED_OUT + '"></script>',
+        'bundle': '<script>var debug = true;</script>\n' +
+            '<script type="text/babel" src="' + path.MINIFIED_OUT + '"></script>',
         'buildTime': new Date().toISOString(),
         'buildId': process.env.npm_config_buildId ? process.env.npm_config_buildId.substr(0, 7) : "xxxxxxx"
     }
