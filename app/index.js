@@ -2,11 +2,13 @@
 
 import ColorGame from './color_game';
 import UserInformation from './userInformation';
+import Assert from 'assert';
 const e = React.createElement;
 
 const config = require('./config.json');
 
 class MainSector extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -32,7 +34,6 @@ class MainSector extends React.Component {
         });
     }
 
-
     render() {
         const { gameStarted, user, diffRange, timeLimit, size, loaded } = this.state;
 
@@ -43,7 +44,7 @@ class MainSector extends React.Component {
                     <p>This is the demo of the different color finding game.</p>
                 </div>
                 {loaded ?
-                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={true} userId={user.uid} /> : <UserInformation />
+                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={debug} userId={user.uid} /> : <UserInformation />
                     : null}
             </div>
         );

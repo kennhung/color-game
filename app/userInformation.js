@@ -30,7 +30,10 @@ class userInformation extends React.Component {
 
                 console.log(errorCode, errorMessage);
             }).then((userCred) => {
-                firebase.firestore().collection("users").doc(userCred.user.uid).set(this.state)
+                firebase.firestore().collection("users").doc(userCred.user.uid).set({
+                    ...this.state,
+                    gender: this.state.gender === "Male" ? 1 : 2
+                })
                     .then(function () {
                         console.log("User information saved!!");
                     })

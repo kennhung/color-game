@@ -13,7 +13,8 @@ class ColorGame extends React.Component {
             time: null,
             started: false,
             wrongAns: null,
-            gameCycle: 0
+            gameCycle: 0,
+            saved: false
         };
     }
 
@@ -39,7 +40,8 @@ class ColorGame extends React.Component {
             color: color,
             showDiff: false,
             wrongAns: null,
-            gameCycle: this.state.gameCycle + 1
+            gameCycle: this.state.gameCycle + 1,
+            saved: false
         });
     }
 
@@ -69,6 +71,7 @@ class ColorGame extends React.Component {
 
             if (time < 0) {
                 this.showDiff();
+                this.saveResult();
             }
 
             this.setState({
@@ -122,30 +125,56 @@ class ColorGame extends React.Component {
 
     clickBlock(correct) {
 
+        const setState = this.setState.bind(this);
+
         if (correct) {
             this.saveResult();
             this.reloadColorGame();
             this.startTimer();
         } else {
-            this.setState({
+            clearTimeout(this.wrongAnsTimer);
+
+            setState({
                 ...this.state,
                 wrongAns: true
             });
+
+            this.wrongAnsTimer = setTimeout(() => {
+                setState({
+                    wrongAns: false
+                });
+            }, 2000);
         }
     }
 
     saveResult() {
-        const { color, diffColor, gameId, time, diffLocation } = this.state;
-        let data = {
-            userId: this.props.userId,
-            gameId,
-            color,
-            diffColor,
-            time,
-            diffLocation
-        }
+        if (!this.state.saved) {
+            const { color, diffColor, gameId, time, diffLocation } = this.state;
+            let data = {
+                userId: this.props.userId,
+                gameId,
+                color,
+                diffColor,
+                time,
+                diffLocation,
+                host: window.location.host
+            }
 
-        console.log(data);
+            this.setState({
+                ...this.state,
+                saved: true
+            })
+
+            console.log(data);
+
+            if (!this.props.debug) {
+                firebase.firestore().collection("records").add(data)
+                    .then((docRef) => {
+                        console.log("Successfully saved on REF ", docRef.id);
+                    })
+                    .catch((err) => console.log(err));
+            }
+        }
     }
 
     render() {

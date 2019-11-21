@@ -13,31 +13,44 @@ const path = {
     MINIFIED_OUT: 'bundle.min.js',
     OUT: 'bundle.js',
     DEST: 'build',
-    ENTRY_POINT: './app/index.js'
+    ENTRY_POINT: './app/index.js',
+    SCRIPTS: './app/*'
 };
 
 gulp.task('watch', function () {
     gulp.watch(path.public, gulp.series('copy'));
 
-    var watcher = watchify(browserify({
-        entries: [path.ENTRY_POINT],
-        debug: true,
-    }));
-    return watcher.on('update', function () {
-        watcher.transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
-            .bundle()
-            .pipe(source(path.OUT))
-            .pipe(gulp.dest(path.DEST))
-        console.log('Updated');
-    })
-        .bundle()
-        .pipe(source(path.OUT))
-        .pipe(gulp.dest(path.DEST));
+    gulp.watch(path.SCRIPTS, gulp.series('bundle'));
+
+    // var watcher = watchify(browserify({
+    //     entries: [path.ENTRY_POINT],
+    //     debug: true,
+    // }));
+    // return watcher.on('update', function () {
+    //     watcher.transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
+    //         .bundle()
+    //         .pipe(source(path.OUT))
+    //         .pipe(gulp.dest(path.DEST))
+    //     console.log('Updated on ', new Date().toLocaleString());
+    // })
+    //     .bundle()
+    //     .pipe(source(path.OUT))
+    //     .pipe(gulp.dest(path.DEST));
 
 });
 
 gulp.task('copy', function () {
     return gulp.src(path.public)
+        .pipe(gulp.dest(path.DEST));
+});
+
+gulp.task('bundle', function () {
+    return browserify({
+        entries: [path.ENTRY_POINT]
+    })
+        .transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
+        .bundle()
+        .pipe(source(path.OUT))
         .pipe(gulp.dest(path.DEST));
 });
 
@@ -76,4 +89,4 @@ gulp.task('apply-prod-environment', function (done) {
 
 
 exports.production = gulp.series('copy', 'build-minify', 'replaceHTML', 'apply-prod-environment');
-exports.default = gulp.parallel('watch', 'copy');
+exports.default = gulp.parallel('watch', 'copy', 'bundle');
