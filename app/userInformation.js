@@ -6,7 +6,8 @@ class userInformation extends React.Component {
 
         this.state = {
             birthday: null,
-            gender: "Male"
+            gender: "Male",
+            admin: false
         };
 
         this.onSubmit = this.onSubmit.bind(this);
