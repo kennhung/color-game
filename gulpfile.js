@@ -9,7 +9,7 @@ const uglify = require('gulp-uglify');
 
 const path = {
     HTML: './public/index.html',
-    public: './public/*',
+    public: './public/**',
     MINIFIED_OUT: 'bundle.min.js',
     OUT: 'bundle.js',
     DEST: 'build',
