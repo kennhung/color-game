@@ -24,8 +24,8 @@ gulp.task('watch', function () {
         debug: true,
     }));
     return watcher.on('update', function () {
-        watcher.bundle()
-            .transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
+        watcher.transform(['babelify', { presets: ['@babel/preset-env', '@babel/preset-react'], plugins: ['@babel/plugin-proposal-class-properties'] }])
+            .bundle()
             .pipe(source(path.OUT))
             .pipe(gulp.dest(path.DEST))
         console.log('Updated');

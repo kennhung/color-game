@@ -11,40 +11,30 @@ class MainSector extends React.Component {
         super(props);
         this.state = {
             gameStarted: false,
-            userId: null,
+            user: firebase.auth().currentUser,
             loaded: true,
             diffRange: config.diffRange,
             size: config.size,
             timeLimit: config.timeLimit
         };
+
+        const setState = this.setState.bind(this);
+
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                // User is signed in.
+                var uid = user.uid;
+                console.log("UID", uid);
+                setState({
+                    user: user
+                });
+            }
+        });
     }
 
-    componentDidMount() {
-        this.loadConfig();
-    }
-
-    loadConfig() {
-        // firebase.firestore().collection("settings").doc("default").get().then((doc) => {
-        //     const data = doc.data();
-        //     this.setState({
-        //         ...this.state,
-        //         size: data.size,
-        //         diffRange: data.diffRange,
-        //         timeLimit: data.timeLimit,
-        //         loaded: true
-        //     })
-        // }).catch((err) => console.log(err));
-    }
-
-    setUserId = (id) => {
-        this.setState({
-            ...this.state,
-            userId: id
-        })
-    }
 
     render() {
-        const { gameStarted, userId, diffRange, timeLimit, size, loaded } = this.state;
+        const { gameStarted, user, diffRange, timeLimit, size, loaded } = this.state;
 
         return (
             <div className="container mt-5">
@@ -53,7 +43,7 @@ class MainSector extends React.Component {
                     <p>This is the demo of the different color finding game.</p>
                 </div>
                 {loaded ?
-                    userId ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={true} userId={userId} /> : <UserInformation setUserId={this.setUserId} />
+                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={true} userId={user.uid} /> : <UserInformation />
                     : null}
             </div>
         );

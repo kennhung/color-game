@@ -1,16 +1,8 @@
 'use strict';
 
-import Cookies from 'js-cookie';
-
 class userInformation extends React.Component {
     constructor(props) {
         super(props);
-
-        let userId = Cookies.get('userId');
-
-        if (userId != undefined) {
-            props.setUserId(userId);
-        }
 
         this.state = {
             birthday: null,
@@ -29,15 +21,22 @@ class userInformation extends React.Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        const setUserId = this.props.setUserId;
 
-        firebase.firestore().collection("users").add(this.state)
-            .then(function (docRef) {
-                Cookies.set("userId", docRef.id);
-                setUserId(docRef.id);
-            })
+        firebase.auth().signInAnonymously()
             .catch(function (error) {
-                console.error("Error adding document: ", error);
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+
+                console.log(errorCode, errorMessage);
+            }).then((userCred) => {
+                firebase.firestore().collection("users").doc(userCred.user.uid).set(this.state)
+                    .then(function () {
+                        console.log("User information saved!!");
+                    })
+                    .catch(function (error) {
+                        console.error("Error adding document: ", error);
+                    });
             });
     }
 
