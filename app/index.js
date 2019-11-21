@@ -45,8 +45,6 @@ class MainSector extends React.Component {
                 {loaded ?
                     user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={debug ? debug : false} userId={user.uid} /> : <UserInformation />
                     : null}
-
-                <LoginPanel />
             </div>
         );
     }
