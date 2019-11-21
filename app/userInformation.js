@@ -50,8 +50,6 @@ class userInformation extends React.Component {
                     <h5 className="card-title">Basic Information</h5>
                     <h6 className="card-subtitle mb-2 text-muted">some text....</h6>
 
-                    <button className="btn btn-secondary mb-2" onClick={() => this.props.setUserId("skip")}>Skip</button>
-
                     <form onSubmit={this.onSubmit}>
                         <div className="form-group">
                             <label htmlFor="birthday">Birthday</label>
