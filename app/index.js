@@ -16,7 +16,8 @@ class MainSector extends React.Component {
             loaded: true,
             diffRange: config.diffRange,
             size: config.size,
-            timeLimit: config.timeLimit
+            timeLimit: config.timeLimit,
+            totalTime: config.totalTime
         };
 
         const setState = this.setState.bind(this);
@@ -34,7 +35,7 @@ class MainSector extends React.Component {
     }
 
     render() {
-        const { gameStarted, user, diffRange, timeLimit, size, loaded } = this.state;
+        const { gameStarted, user, diffRange, timeLimit, size, loaded, totalTime } = this.state;
 
         return (
             <div className="container mt-5">
@@ -43,7 +44,7 @@ class MainSector extends React.Component {
                     <p>This is the demo of the different color finding game.</p>
                 </div>
                 {loaded ?
-                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} debug={debug ? debug : false} userId={user.uid} /> : <UserInformation />
+                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} /> : <UserInformation />
                     : null}
             </div>
         );

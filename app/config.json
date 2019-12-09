@@ -1,5 +1,6 @@
 {
     "diffRange": 50,
     "size": 5,
-    "timeLimit": 5000
+    "timeLimit": 5000,
+    "totalTime": 60000
 }

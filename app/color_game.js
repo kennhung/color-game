@@ -54,6 +54,10 @@ class ColorGame extends React.Component {
         });
 
         this.startTimer();
+
+        if (!localStorage.getItem("gameStartTime")) {
+            localStorage.setItem("gameStartTime", new Date().toISOString());
+        }
     }
 
     startTimer() {
@@ -72,6 +76,7 @@ class ColorGame extends React.Component {
             if (time < 0) {
                 this.showDiff();
                 this.saveResult();
+                this.clickBlock(true);
             }
 
             this.setState({
@@ -129,8 +134,12 @@ class ColorGame extends React.Component {
 
         if (correct) {
             this.saveResult();
-            this.reloadColorGame();
-            this.startTimer();
+            if (this.getPassedTime() < this.props.totalTime) {
+                this.reloadColorGame();
+                this.startTimer();
+            } else {
+
+            }
         } else {
             clearTimeout(this.wrongAnsTimer);
 
@@ -177,10 +186,19 @@ class ColorGame extends React.Component {
         }
     }
 
+    getPassedTime() {
+        let gameStartTime = localStorage.getItem("gameStartTime");
+        return gameStartTime ? new Date() - new Date(gameStartTime) : 0;
+    }
+
     render() {
         let rows = [];
 
-        let { diffLocation, color, diffColor, started, time, wrongAns } = this.state;
+        let { diffLocation, color, diffColor, started, time, wrongAns, saved } = this.state;
+
+        let passedTime = this.getPassedTime();
+
+        console.log(passedTime);
 
         for (let i = 0; i < this.props.size; i++) {
             let row = [];
@@ -211,17 +229,18 @@ class ColorGame extends React.Component {
 
                 <div className="mb-3 text-center">
                     <h4 className={"fade " + (!!wrongAns ? "show" : "")}><span className={"badge badge-danger"} > Wrong Answer</span></h4>
-                    <h5>{started ? (time > 0 ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{Math.floor(time % 1000)} sec</span> : <span className="badge badge-danger">Time's Up</span>) : <span className="badge badge-success">Waiting to start</span>}</h5>
+                    <h5>{passedTime < this.props.totalTime ? (started ? (time > 0 ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{Math.floor(time % 1000)} sec</span> : <span className="badge badge-danger">Time's Up</span>) : <span className="badge badge-success">Waiting to start</span>) : <span className="badge badge-warning">Can not play anymore</span>}</h5>
                 </div>
 
-                <div className={!started ? "text-center" : "d-none"}>
+                <div className={!started && passedTime < this.props.totalTime ? "text-center" : "d-none"}>
                     <button className="btn btn-primary btn-lg" onClick={() => { this.startGame(); }}>Start</button>
                 </div>
 
+
                 <div className="text-center">
-                    {started ? <div className="mx-1">{rows}</div> : null}
+                    {passedTime < this.props.totalTime || (!saved && started) ? (started ? <div className="mx-1">{rows}</div> : null) : <h3>You can only play 1 times.</h3>}
                 </div>
-            </div >
+            </div>
         );
     }
 }
