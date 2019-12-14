@@ -228,17 +228,23 @@ class ColorGame extends React.Component {
 
 
                 <div className="mb-3 text-center">
-                    <h4 className={"fade " + (!!wrongAns ? "show" : "")}><span className={"badge badge-danger"} > Wrong Answer</span></h4>
-                    <h5>{passedTime < this.props.totalTime ? (started ? (time > 0 ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{Math.floor(time % 1000)} sec</span> : <span className="badge badge-danger">Time's Up</span>) : <span className="badge badge-success">Waiting to start</span>) : <span className="badge badge-warning">Can not play anymore</span>}</h5>
+                    <h4 className={"fade " + (!!wrongAns ? "show" : "")}><span className={"badge badge-danger"} >不是這個唷</span></h4>
+                    <h5>{passedTime < this.props.totalTime ? (started ? (time > 0 ? <span className="badge badge-primary">{Math.floor(time / 1000)}.{Math.floor(time % 1000)} sec</span> : <span className="badge badge-danger">時間到</span>) : <span className="badge badge-success">遊戲準備開始</span>) : <span className="badge badge-warning">遊戲結束</span>}</h5>
                 </div>
 
                 <div className={!started && passedTime < this.props.totalTime ? "text-center" : "d-none"}>
-                    <button className="btn btn-primary btn-lg" onClick={() => { this.startGame(); }}>Start</button>
+                    <button className="btn btn-primary btn-lg" onClick={() => { this.startGame(); }}>開始</button>
                 </div>
 
 
                 <div className="text-center">
-                    {passedTime < this.props.totalTime || (!saved && started) ? (started ? <div className="mx-1">{rows}</div> : null) : <h3>You can only play 1 times.</h3>}
+                    {passedTime < this.props.totalTime || (!saved && started) ? (started ? <div className="mx-1">{rows}</div> : null) : <div>
+                        <h3>感謝遊玩~~~</h3>
+                        <button className="btn btn-secondary mt-2" onClick={() => {
+                            localStorage.setItem("gameStartTime", "");
+                            location.reload();
+                        }}>再玩一次</button>
+                    </div>}
                 </div>
             </div>
         );

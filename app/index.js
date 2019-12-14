@@ -40,8 +40,8 @@ class MainSector extends React.Component {
         return (
             <div className="container mt-5">
                 <div className={gameStarted ? "d-none d-md-block" : ""}>
-                    <h2>Find the different color</h2>
-                    <p>This is the demo of the different color finding game.</p>
+                    <h2>找出圖中顏色與其他不同的格子</h2>
+                    <p>說明......</p>
                 </div>
                 {loaded ?
                     user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} /> : <UserInformation />
