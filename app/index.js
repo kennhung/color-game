@@ -17,7 +17,8 @@ class MainSector extends React.Component {
             diffRange: config.diffRange,
             size: config.size,
             timeLimit: config.timeLimit,
-            totalTime: config.totalTime
+            totalTime: config.totalTime,
+            initialized: false
         };
 
         const setState = this.setState.bind(this);
@@ -34,6 +35,34 @@ class MainSector extends React.Component {
         });
     }
 
+    componentDidMount() {
+        remoteConfig.ensureInitialized()
+            .then(() => remoteConfig.fetchAndActivate())
+            .then(() => {
+                console.log('Firebase Remote Config is initialized');
+                console.log(remoteConfig.getAll());
+
+                let newState = {
+                    ...this.state,
+                    initialized: true,
+                };
+
+                if (remoteConfig.lastFetchStatus === 'success') {
+                    newState = {
+                        ...newState,
+                        timeLimit: remoteConfig.getNumber('time_limit'),
+                        diffRange: remoteConfig.getNumber('different_range'),
+                        totalTime: remoteConfig.getNumber('total_time')
+                    }
+                }
+
+                this.setState(newState);
+            })
+            .catch((err) => {
+                console.error('Firebase Remote Config failed to initialize', err);
+            });
+    }
+
     render() {
         const { gameStarted, user, diffRange, timeLimit, size, loaded, totalTime } = this.state;
 
@@ -41,10 +70,10 @@ class MainSector extends React.Component {
             <div className="container mt-5">
                 <div className={gameStarted ? "d-none d-md-block" : ""}>
                     <h2>找出圖中顏色與其他不同的格子</h2>
-                    <p>說明......</p>
+                    {!gameStarted ? <p>說明......</p> : null}
                 </div>
                 {loaded ?
-                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} /> : <UserInformation />
+                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} startCallback={() => { this.setState({ gameStarted: true }) }} /> : <UserInformation />
                     : null}
             </div>
         );

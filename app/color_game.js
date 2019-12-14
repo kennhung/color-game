@@ -48,6 +48,8 @@ class ColorGame extends React.Component {
     startGame() {
         this.reloadColorGame();
 
+        this.props.startCallback();
+
         this.setState({
             ...this.state,
             started: true
