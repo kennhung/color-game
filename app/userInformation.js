@@ -48,20 +48,20 @@ class userInformation extends React.Component {
         return (
             <div className="card border-secondary">
                 <div className="card-body">
-                    <h5 className="card-title">Basic Information</h5>
-                    <h6 className="card-subtitle mb-2 text-muted">some text....</h6>
+                    <h5 className="card-title">基本資料</h5>
+                    <h6 className="card-subtitle mb-2 text-muted">填寫的資料只會用於統計，並不會用於其他用途</h6>
 
                     <form onSubmit={this.onSubmit}>
                         <div className="form-group">
-                            <label htmlFor="birthday">Birthday</label>
+                            <label htmlFor="birthday">生日</label>
                             <input required type="date" className="form-control" id="birthday" onChange={this.onChange} />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="gender">Genger</label>
+                            <label htmlFor="gender">生理性別</label>
                             <select required className="form-control" defaultValue={"Male"} id="gender" onChange={this.onChange}>
-                                <option>Male</option>
-                                <option>Female</option>
+                                <option>男</option>
+                                <option>女</option>
                             </select>
                         </div>
 
