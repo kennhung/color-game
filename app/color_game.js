@@ -247,10 +247,16 @@ class ColorGame extends React.Component {
                 <div className="text-center">
                     {passedTime < this.props.totalTime || (!saved && started) ? (started ? <div className="mx-1">{rows}</div> : null) : <div>
                         <h3>感謝遊玩~~~</h3>
-                        <button className="btn btn-secondary mt-2" onClick={() => {
-                            localStorage.setItem("gameStartTime", "");
-                            location.reload();
-                        }}>再玩一次</button>
+
+                        {
+                            this.props.canPlayMultiTime ?
+                                <button className="btn btn-secondary mt-2" onClick={() => {
+                                    localStorage.setItem("gameStartTime", "");
+                                    location.reload();
+                                }}>再玩一次</button>
+                                : null
+                        }
+
                     </div>}
                 </div>
             </div>

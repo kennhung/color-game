@@ -19,7 +19,8 @@ class MainSector extends React.Component {
             timeLimit: config.timeLimit,
             totalTime: config.totalTime,
             initialized: false,
-            keyDiff: false
+            keyDiff: false,
+            canPlayMultiTime: false
         };
 
         const setState = this.setState.bind(this);
@@ -57,6 +58,7 @@ class MainSector extends React.Component {
                         timeLimit: remoteConfig.getNumber('time_limit'),
                         diffRange: remoteConfig.getNumber('different_range'),
                         totalTime: remoteConfig.getNumber('total_time'),
+                        canPlayMultiTime: remoteConfig.getBoolean('can_play_multiTime'),
                         keyDiff
                     }
                 }
@@ -69,7 +71,7 @@ class MainSector extends React.Component {
     }
 
     render() {
-        const { gameStarted, user, diffRange, timeLimit, size, loaded, totalTime, keyDiff } = this.state;
+        const { gameStarted, user, diffRange, timeLimit, size, loaded, totalTime, keyDiff, canPlayMultiTime } = this.state;
 
         return (
             <div className="container mt-5">
@@ -82,7 +84,7 @@ class MainSector extends React.Component {
                         : null}
                 </div>
                 {loaded ?
-                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} startCallback={() => { this.setState({ gameStarted: true }) }} keyDiff={keyDiff} /> : <UserInformation />
+                    user ? <ColorGame timeLimit={timeLimit} size={size} diffRange={diffRange} totalTime={totalTime} debug={debug ? debug : false} userId={user.uid} startCallback={() => { this.setState({ gameStarted: true }) }} keyDiff={keyDiff} canPlayMultiTime={canPlayMultiTime} /> : <UserInformation />
                     : null}
             </div>
         );
