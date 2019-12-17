@@ -2,6 +2,11 @@
 
 class ColorGame extends React.Component {
     constructor(props) {
+
+        if (props.keyDiff) {
+            localStorage.setItem('gameStartTime', '');
+        }
+
         super(props);
         this.state = {
             gameId: _uuid(),
