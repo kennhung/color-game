@@ -19,11 +19,16 @@ class ColorGame extends React.Component {
             started: false,
             wrongAns: null,
             gameCycle: 0,
-            saved: false
+            saved: false,
+            recs: [],
+            avgSpeed: parseInt(localStorage.getItem("avgSpeed")),
         };
     }
 
     componentDidMount() {
+        this.setState({
+            recs: localStorage.getItem("records") ? JSON.parse(localStorage.getItem("records")) : []
+        })
         this.reloadColorGame();
     }
 
@@ -39,7 +44,6 @@ class ColorGame extends React.Component {
         let diffLocation = [Math.floor(Math.random() * (this.props.size - 1)), Math.floor(Math.random() * (this.props.size - 1))];
 
         this.setState({
-            ...this.state,
             diffLocation: diffLocation,
             diffColor: diffColor,
             color: color,
@@ -56,7 +60,6 @@ class ColorGame extends React.Component {
         this.props.startCallback();
 
         this.setState({
-            ...this.state,
             started: true
         });
 
@@ -82,7 +85,6 @@ class ColorGame extends React.Component {
 
             if (time < 0) {
                 this.showDiff();
-                this.saveResult();
                 this.clickBlock(true);
             }
 
@@ -129,7 +131,6 @@ class ColorGame extends React.Component {
 
     showDiff = () => {
         this.setState({
-            ...this.state,
             showDiff: true
         });
         this.stopTimer();
@@ -144,14 +145,11 @@ class ColorGame extends React.Component {
             if (this.getPassedTime() < this.props.totalTime) {
                 this.reloadColorGame();
                 this.startTimer();
-            } else {
-
             }
         } else {
             clearTimeout(this.wrongAnsTimer);
 
             setState({
-                ...this.state,
                 wrongAns: true
             });
 
@@ -163,7 +161,27 @@ class ColorGame extends React.Component {
         }
     }
 
-    saveResult() {
+    calculateResult(allData) {
+        let timeSum = 0;
+        let played = allData.length;
+        let successCount = 0;
+        allData.forEach((data) => {
+            if (data.time > 100) {
+                timeSum += this.props.timeLimit - data.time;
+                successCount++;
+            }
+        });
+
+        return {
+            successCount,
+            timeSum,
+            played,
+            averageTime: timeSum / successCount,
+            rate: successCount / played
+        }
+    }
+
+    saveResult = () => {
         if (!this.state.saved) {
             const { color, diffColor, gameId, time, diffLocation } = this.state;
             let data = {
@@ -177,9 +195,11 @@ class ColorGame extends React.Component {
             }
 
             this.setState({
-                ...this.state,
-                saved: true
-            })
+                saved: true,
+                recs: [...this.state.recs, data]
+            });
+
+            localStorage.setItem("records", JSON.stringify(this.state.recs));
 
             console.log(data);
 
@@ -205,8 +225,6 @@ class ColorGame extends React.Component {
 
         let passedTime = this.getPassedTime();
 
-        console.log(passedTime);
-
         for (let i = 0; i < this.props.size; i++) {
             let row = [];
             for (let j = 0; j < this.props.size; j++) {
@@ -223,6 +241,11 @@ class ColorGame extends React.Component {
             rows.push(
                 <div className="row" key={i} style={{ height: "100px" }}>{row}</div>
             )
+        }
+
+        let resultData = {};
+        if (!(passedTime < this.props.totalTime || (!saved && started))) {
+            resultData = this.calculateResult(this.state.recs);
         }
 
         return (
@@ -246,8 +269,16 @@ class ColorGame extends React.Component {
 
                 <div className="text-center">
                     {passedTime < this.props.totalTime || (!saved && started) ? (started ? <div className="mx-1">{rows}</div> : null) : <div>
-                        <h3>感謝遊玩~~~</h3>
-
+                        <h4>感謝遊玩~~~</h4>
+                        <div className="mt-4">
+                            你的平均反應速度：<span className="badge badge-primary">{resultData.averageTime ? Math.floor(resultData.averageTime * 100) / 100 : "N/A"} 毫秒</span>
+                            <br />
+                            你答對了 <span className="badge badge-primary">{resultData.successCount}</span> 題
+                                    <br />
+                            你總共做了 <span className="badge badge-primary">{resultData.played}</span> 題
+                                    <br />
+                            正確率：<span className="badge badge-primary">{resultData.rate ? Math.floor(resultData.rate * 100) + "%" : "N/A"}</span>
+                        </div>
                         {
                             this.props.canPlayMultiTime ?
                                 <button className="btn btn-secondary mt-2" onClick={() => {
