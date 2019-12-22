@@ -14,7 +14,7 @@
 <body>
     <div class="container-fluid">
         <div class="row mt-3">
-            <div class="col-3">
+            <div class="col-md-3 col-12">
                 <div class="card text-center">
                     <div class="m-2">
                         <h2 class="mt-3">Dashboard</h2>
@@ -64,14 +64,43 @@
                     </div>
                 </div>
             </div>
-            <div class="col-9">
+            <div class="col-md-9 col-12 mt-3 mt-md-0">
                 <div class="card">
                     <div class="tab-content m-2">
                         <div class="tab-pane fade show active" id="main" role="tabpanel">
-                            main
+                            <form class="m-3 text-center">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-success"
+                                        onclick="renderGetUser();">User</button>
+                                    <button type="button" class="btn btn-warning">Records</button>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <textarea id="result_text_area" class="form-control" readonly>Select one</textarea>
+                                </div>
+                            </form>
                         </div>
                         <div class="tab-pane fade show" id="records" role="tabpanel">
-                            ...
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            gameId
+                                        </th>
+                                        <th scope="col">
+                                            userId
+                                        </th>
+                                        <th scope="col">
+                                            avgTime
+                                        </th>
+                                        <th scope="col">
+                                            count
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="record_Tbody">
+
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane fade show" id="users" role="tabpanel">
                             ...
@@ -139,6 +168,56 @@
             document.getElementById("ver_tag").innerText = data.buildId ? data.buildId : "n/a";
             document.getElementById("build_time").innerText = new Date(data.buildTime).toLocaleString();
         }
+    </script>
+
+    <!-- records -->
+    <script>
+        const resultTextArea = document.getElementById("result_text_area");
+
+        function readAllUser() {
+            return firebase.firestore().collection("users").get().then((docs) => {
+                let data = {};
+
+                docs.docs.forEach((doc) => {
+                    data[doc.id] = doc.data();
+                });
+                return data;
+            });
+        }
+
+        function readAllRecord() {
+            return firebase.firestore().collection("records").get().then((docs) => {
+                let data = [];
+
+                docs.docs.forEach((doc) => {
+                    data.push(doc.data());
+                });
+                return data;
+            });
+        }
+
+        function renderGetUser() {
+            resultTextArea.innerText = "Getting User......";
+            readAllUser()
+                .then((users) => {
+                    resultTextArea.innerText = JSON.stringify(users);
+                })
+                .catch((err) => {
+                    resultTextArea.innerText = err.message;
+                });
+        }
+
+        function renderGetRecord() {
+            resultTextArea.innerText = "Getting Records......";
+            readAllRecord()
+                .then((records) => {
+                    resultTextArea.innerText = JSON.stringify(records);
+                })
+                .catch((err) => {
+                    resultTextArea.innerText = err.message;
+                });
+        }
+
     </script>
 </body>
 
