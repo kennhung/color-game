@@ -285,9 +285,9 @@ class ColorGame extends React.Component {
                             <br />
                             你總共做了 <span className="badge badge-primary">{resultData.played}</span> 題
                                     <br />
-                            你花費了最長 <span className="badge badge-primary">{resultData.max}</span> 秒解一題
+                            你花費了最長 <span className="badge badge-primary">{resultData.max / 1000}</span> 秒解一題
                                     <br />
-                            你最快只花了 <span className="badge badge-primary">{resultData.min}</span> 秒解一題
+                            你最快只花了 <span className="badge badge-primary">{resultData.min / 1000}</span> 秒解一題
                             <span className="d-none">正確率：<span className="badge badge-primary">{resultData.rate ? Math.floor(resultData.rate * 100) + "%" : "N/A"}</span></span>
                         </div>
                         {
