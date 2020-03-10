@@ -191,7 +191,9 @@ class ColorGame extends React.Component {
                 diffColor,
                 time,
                 diffLocation,
-                host: window.location.host
+                host: window.location.host,
+                updateKey: this.props.updateKey,
+                gameTakenTime: new Date().toISOString()
             }
 
             this.setState({
