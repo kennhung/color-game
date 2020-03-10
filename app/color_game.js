@@ -169,8 +169,8 @@ class ColorGame extends React.Component {
         let min = null;
         allData.forEach((data) => {
             if (data.time > 100) {
-                if (min === null || data.time < min) min = data.time;
-                if (max === null || data.time > max) max = data.time;
+                if (min === null || (this.props.timeLimit - data.time) < min) min = (this.props.timeLimit - data.time);
+                if (max === null || (this.props.timeLimit - data.time) > max) max = (this.props.timeLimit - data.time);
 
                 timeSum += this.props.timeLimit - data.time;
                 successCount++;
