@@ -165,8 +165,13 @@ class ColorGame extends React.Component {
         let timeSum = 0;
         let played = allData.length;
         let successCount = 0;
+        let max = null;
+        let min = null;
         allData.forEach((data) => {
             if (data.time > 100) {
+                if (min === null || data.time < min) min = data.time;
+                if (max === null || data.time > max) max = data.time;
+
                 timeSum += this.props.timeLimit - data.time;
                 successCount++;
             }
@@ -177,7 +182,9 @@ class ColorGame extends React.Component {
             timeSum,
             played,
             averageTime: timeSum / successCount,
-            rate: successCount / played
+            rate: successCount / played,
+            min,
+            max
         }
     }
 
@@ -275,11 +282,13 @@ class ColorGame extends React.Component {
                         <div className="mt-4">
                             你的平均反應速度：<span className="badge badge-primary">{resultData.averageTime ? Math.floor(resultData.averageTime * 100) / 100 : "N/A"} 毫秒</span>
                             <br />
-                            你答對了 <span className="badge badge-primary">{resultData.successCount}</span> 題
-                                    <br />
+                            <br />
                             你總共做了 <span className="badge badge-primary">{resultData.played}</span> 題
                                     <br />
-                            正確率：<span className="badge badge-primary">{resultData.rate ? Math.floor(resultData.rate * 100) + "%" : "N/A"}</span>
+                            你花費了最長 <span className="badge badge-primary">{resultData.max}</span> 秒解一題
+                                    <br />
+                            你最快只花了 <span className="badge badge-primary">{resultData.min}</span> 秒解一題
+                            <span className="d-none">正確率：<span className="badge badge-primary">{resultData.rate ? Math.floor(resultData.rate * 100) + "%" : "N/A"}</span></span>
                         </div>
                         {
                             this.props.canPlayMultiTime ?
