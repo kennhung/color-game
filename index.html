@@ -38,15 +38,11 @@
                 <h6 class="text-center">
                     Build:
                     <span class="badge badge-info">
-                        <!-- build:buildId -->
-                        xxxxxxx
-                        <!-- endbuild -->
+                        934dca7
                     </span>
                     on
                     <small>
-                        <!--build:buildTime-->
-                        ??????
-                        <!--endbuild-->
+                        2020-04-19T17:36:39.307Z
                     </small>
                 </h6>
             </div>
@@ -54,11 +50,8 @@
     </div>
 
     <!-- Load React. -->
-    <!-- build:react -->
-    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
-    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-    <!-- endbuild -->
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
 
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
@@ -77,10 +70,8 @@
     </script>
 
     <!-- Load our React component. -->
-    <!-- build:bundle -->
-    <script>var debug = true;</script>
-    <script type="text/babel" src="bundle.js"></script>
-    <!-- endbuild -->
+    <script>var debug = false;</script>
+<script type="text/babel" src="bundle.min.js"></script>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
